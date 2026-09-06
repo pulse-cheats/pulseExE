@@ -1,0 +1,31 @@
+name: Build Pulse Dylib
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Environment
+      run: |
+        echo "Setting up build environment for macOS dylib..."
+        mkdir -p build
+
+    - name: Compile Dylib
+      run: |
+        clang++ -dynamiclib -std=c++17 -O3 src/main.cpp -o build/PulseExecutor.dylib -framework Foundation -framework AppKit
+        
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: PulseExecutor-Dylib
+        path: build/PulseExecutor.dylib
